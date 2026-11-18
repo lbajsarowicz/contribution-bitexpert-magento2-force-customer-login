@@ -30,6 +30,11 @@ class WhitelistDefaultInstallerUnitTest extends TestCase
      * @test
      * @dataProvider \BitExpert\ForceCustomerLogin\Test\DataProviders\WhitelistDataProvider::get()
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(
+        \BitExpert\ForceCustomerLogin\Test\DataProviders\WhitelistDataProvider::class,
+        'get'
+    )]
     public function installsSuccessfully($entries)
     {
         $poolMock = $this->createMock(WhitelistDefaultPool::class);

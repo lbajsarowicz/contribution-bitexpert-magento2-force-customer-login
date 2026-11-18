@@ -27,6 +27,7 @@ class EditUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function executeSuccessfully()
     {
         $view = $this->createMock(ViewInterface::class);

@@ -29,6 +29,7 @@ class LoginRouterUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function testClassExists()
     {
         $this->assertTrue(class_exists(LoginRouter::class));
@@ -38,6 +39,8 @@ class LoginRouterUnitTest extends TestCase
      * @test
      * @depends testClassExists
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testClassExists')]
     public function runRedirectRoutingOnlyIfLoginCheckHasExecutedSuccessfully()
     {
         $actionFactory = $this->getActionFactory();
@@ -55,8 +58,9 @@ class LoginRouterUnitTest extends TestCase
             $loginCheck
         );
 
-        $request = $this->getMockBuilder(RequestInterface::class)
-            ->setMethods([
+        $request = $this->getMockBuilder(RequestDoubleInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
                 'getModuleName',
                 'setModuleName',
                 'getActionName',
@@ -80,6 +84,8 @@ class LoginRouterUnitTest extends TestCase
      * @test
      * @depends testClassExists
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testClassExists')]
     public function skipRedirectRoutingIfLoginCheckHasNotBeenExecuted()
     {
         $actionFactory = $this->getActionFactory();
@@ -97,8 +103,9 @@ class LoginRouterUnitTest extends TestCase
             $loginCheck
         );
 
-        $request = $this->getMockBuilder('\Magento\Framework\App\RequestInterface')
-            ->setMethods([
+        $request = $this->getMockBuilder(RequestDoubleInterface::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([
                 'getModuleName',
                 'setModuleName',
                 'getActionName',

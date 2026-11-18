@@ -36,6 +36,7 @@ class StoreNameUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function prepareDataSourceSuccessfully()
     {
         $storeId = 42;
@@ -50,7 +51,7 @@ class StoreNameUnitTest extends TestCase
             ->willReturn('foobar');
 
         $storeManager = $this->getStoreManager();
-        $storeManager->expects($this->any())
+        $storeManager->expects($this->atLeastOnce())
             ->method('getStore')
             ->willReturnMap([
                 [0, $globalStore],

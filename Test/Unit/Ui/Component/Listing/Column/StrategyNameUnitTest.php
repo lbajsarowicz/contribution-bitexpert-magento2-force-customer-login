@@ -29,6 +29,7 @@ class StrategyNameUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function prepareDataSourceSuccessfully()
     {
         $strategy = $this->createMock(StrategyInterface::class);
@@ -37,13 +38,13 @@ class StrategyNameUnitTest extends TestCase
             ->willReturn('FooBar');
 
         $strategyManager = $this->getStrategyManager();
-        $strategyManager->expects($this->any())
+        $strategyManager->expects($this->atLeastOnce())
             ->method('has')
             ->willReturnMap([
                 ['baz', false],
                 ['foobar', true]
             ]);
-        $strategyManager->expects($this->any())
+        $strategyManager->expects($this->atLeastOnce())
             ->method('get')
             ->with('foobar')
             ->willReturn($strategy);

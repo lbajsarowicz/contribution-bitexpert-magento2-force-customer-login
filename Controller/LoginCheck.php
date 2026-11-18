@@ -129,8 +129,7 @@ class LoginCheck implements LoginCheckInterface
         }
 
         // if user is logged in, every thing is fine
-        if ($this->customerSession instanceof \Magento\Customer\Model\Session &&
-            $this->customerSession->isLoggedIn()) {
+        if ($this->customerSession->isLoggedIn()) {
             return false;
         }
 

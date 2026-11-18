@@ -26,6 +26,7 @@ class StrategyManagerUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function getStrategyNamesSuccessfully()
     {
         /** @var $strategy1 MockObject|StrategyInterface */
@@ -56,6 +57,7 @@ class StrategyManagerUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function getStrategyInstancesSuccessfully()
     {
         /** @var $strategy1 MockObject|StrategyInterface */
@@ -86,6 +88,7 @@ class StrategyManagerUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function getStrategyInstanceSuccessfully()
     {
         /** @var $strategy1 MockObject|StrategyInterface */
@@ -112,6 +115,7 @@ class StrategyManagerUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function getDefaultStrategyInstanceSuccessfully()
     {
         /** @var $strategy1 MockObject|StrategyInterface */
@@ -138,6 +142,7 @@ class StrategyManagerUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function throwErrorOnMissingMatchinStrategyAndNoDefaultStrategy()
     {
         $this->expectException(\InvalidArgumentException::class);

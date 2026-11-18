@@ -62,10 +62,10 @@ class DeleteUnitTest extends TestCase
         $this->whitelist = $this->createMock(WhitelistRepositoryInterface::class);
         $this->redirect = $this->getMockBuilder(Redirect::class)
             ->disableOriginalConstructor()
-            ->setMethodsExcept(['getHttpResponseCode', 'setHttpResponseCode', 'renderResult'])
+            ->onlyMethods(['setPath'])
             ->getMock();
         $this->redirectFactory = $this->createMock(RedirectFactory::class);
-        $this->redirectFactory->expects($this->any())
+        $this->redirectFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($this->redirect);
         $this->request = $this->createMock(RequestInterface::class);
@@ -73,13 +73,13 @@ class DeleteUnitTest extends TestCase
         $this->context = $this->getMockBuilder(Context::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->context->expects($this->any())
+        $this->context->expects($this->atLeastOnce())
             ->method('getResultRedirectFactory')
             ->willReturn($this->redirectFactory);
-        $this->context->expects($this->any())
+        $this->context->expects($this->atLeastOnce())
             ->method('getRequest')
             ->willReturn($this->request);
-        $this->context->expects($this->any())
+        $this->context->expects($this->atLeastOnce())
             ->method('getMessageManager')
             ->willReturn($this->messageManager);
     }
@@ -87,6 +87,7 @@ class DeleteUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function successfullyDeletingWhitelistEntryReturn200Statuscode()
     {
         $this->whitelist->expects($this->once())
@@ -106,6 +107,7 @@ class DeleteUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function failingToDeletingWhitelistEntryWillReturn500Statuscode()
     {
         $this->whitelist->expects($this->once())
@@ -125,6 +127,7 @@ class DeleteUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function exceptionsWillReturn500Statuscode()
     {
         $this->whitelist->expects($this->once())

@@ -29,6 +29,7 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function testGettersAndSetters()
     {
         $resource = $this->getResourceModel();
@@ -61,9 +62,9 @@ class WhitelistEntryUnitTest extends TestCase
      */
     private function getResourceModel()
     {
-        return $this->getMockBuilder(AbstractResource::class)
+        return $this->getMockBuilder(\Magento\Framework\Model\ResourceModel\Db\AbstractDb::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 '_construct',
                 'getConnection',
                 'getIdFieldName'

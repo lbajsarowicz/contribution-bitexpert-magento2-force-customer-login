@@ -26,6 +26,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function matchStaticRulesCorrectly()
     {
         $matcher = new RegExAllNegationMatcher('foobar');
@@ -36,7 +37,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
         $rule = $this->getMockBuilder(WhitelistEntry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $rule->expects($this->any())
+        $rule->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('/foobar');
 
@@ -62,6 +63,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function matchCatchAllRuleCorrectly()
     {
         $matcher = new RegExAllNegationMatcher('foobar');
@@ -70,7 +72,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
         $rule = $this->getMockBuilder(WhitelistEntry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $rule->expects($this->any())
+        $rule->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('/?');
 
@@ -88,6 +90,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function matchCatchAllWithLineEndIdentifierRuleCorrectly()
     {
         $matcher = new RegExAllNegationMatcher('foobar');
@@ -96,7 +99,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
         $rule = $this->getMockBuilder(WhitelistEntry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $rule->expects($this->any())
+        $rule->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('/?$');
 
@@ -114,6 +117,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function matchHomepageRuleCorrectly()
     {
         $matcher = new RegExAllNegationMatcher('foobar');
@@ -122,7 +126,7 @@ class RegExAllNegationMatcherUnitTest extends TestCase
         $rule = $this->getMockBuilder(WhitelistEntry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $rule->expects($this->any())
+        $rule->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('^/?$');
 
