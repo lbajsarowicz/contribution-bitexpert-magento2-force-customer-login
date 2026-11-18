@@ -25,13 +25,14 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToLabelTooShort()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Label value is too short.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('');
 
@@ -42,13 +43,14 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToLabelTooLong()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Label value is too long.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn(str_repeat('.', 256));
 
@@ -59,16 +61,17 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToUrlRuleTooShort()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Url Rule value is too short.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('');
 
@@ -79,16 +82,17 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToUrlRuleTooLong()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Url Rule value is too long.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn(str_repeat('.', 256));
 
@@ -99,19 +103,20 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToStrategyTooShort()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Strategy value is too short.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getStrategy')
             ->willReturn('');
 
@@ -122,19 +127,20 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToStrategyTooLong()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Strategy value is too long.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getStrategy')
             ->willReturn(str_repeat('.', 256));
 
@@ -145,22 +151,23 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationFailsDueToEditableFalseType()
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Editable is no boolean value.');
 
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getStrategy')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getEditable')
             ->willReturn('foo');
 
@@ -171,19 +178,20 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function validationSucceeds()
     {
         $entity = $this->getWhitelistEntry();
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getStrategy')
             ->willReturn('foo');
-        $entity->expects($this->any())
+        $entity->expects($this->atLeastOnce())
             ->method('getEditable')
             ->willReturn(false);
 

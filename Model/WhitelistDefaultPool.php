@@ -35,7 +35,7 @@ class WhitelistDefaultPool
     /**
      * Get default entries from pool
      *
-     * @return array[string, array]
+     * @return array<string, array>
      */
     public function getEntries(): array
     {

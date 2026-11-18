@@ -26,6 +26,11 @@ class WhitelistDefaultPoolUnitTest extends TestCase
      * @test
      * @dataProvider \BitExpert\ForceCustomerLogin\Test\DataProviders\WhitelistDataProvider::get()
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\DataProviderExternal(
+        \BitExpert\ForceCustomerLogin\Test\DataProviders\WhitelistDataProvider::class,
+        'get'
+    )]
     public function getEntriesSuccessfully($entries)
     {
         $pool = new WhitelistDefaultPool($entries);

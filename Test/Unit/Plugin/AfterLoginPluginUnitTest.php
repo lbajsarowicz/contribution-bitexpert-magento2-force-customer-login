@@ -30,6 +30,7 @@ class AfterLoginPluginUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function runAfterExecuteWithRedirectDashboardOptionEnabled()
     {
         $session = $this->getSession();
@@ -64,6 +65,7 @@ class AfterLoginPluginUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function runAfterExecuteWithSpecificTargetUrl()
     {
         $session = $this->getSession();
@@ -101,6 +103,7 @@ class AfterLoginPluginUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function runAfterExecuteWithDefaultTargetUrl()
     {
         $session = $this->getSession();
@@ -138,6 +141,7 @@ class AfterLoginPluginUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function runAfterExecuteWithModuleDisabled()
     {
         $session = $this->getSession();
@@ -173,9 +177,9 @@ class AfterLoginPluginUnitTest extends TestCase
      */
     private function getSession()
     {
-        return $this->getMockBuilder(Session::class)
+        return $this->getMockBuilder(\BitExpert\ForceCustomerLogin\Test\Unit\Model\SessionDouble::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'getAfterLoginReferer'
             ])
             ->getMock();

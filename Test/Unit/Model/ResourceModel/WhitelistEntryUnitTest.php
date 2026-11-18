@@ -26,6 +26,7 @@ class WhitelistEntryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function createEntitySuccessfully()
     {
         $resource = new WhitelistEntry($this->getDatabaseContext());

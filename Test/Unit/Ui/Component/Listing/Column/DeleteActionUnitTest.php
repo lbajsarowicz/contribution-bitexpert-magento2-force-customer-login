@@ -28,6 +28,7 @@ class DeleteActionUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function prepareDataSourceSuccessfully()
     {
         $url = $this->getUrl();

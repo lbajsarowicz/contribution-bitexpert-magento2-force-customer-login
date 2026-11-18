@@ -27,6 +27,7 @@ class CollectionFactoryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function createEntitySuccessfully()
     {
         $expectedEntity = $this->createMock(Collection::class);

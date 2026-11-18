@@ -21,7 +21,6 @@ use BitExpert\ForceCustomerLogin\Helper\Strategy\StrategyManager;
 use BitExpert\ForceCustomerLogin\Model\ResourceModel\WhitelistEntry\Collection;
 use BitExpert\ForceCustomerLogin\Model\Session;
 use BitExpert\ForceCustomerLogin\Model\WhitelistEntry;
-use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\Request\Http as RequestHttp;
@@ -31,7 +30,6 @@ use Magento\Framework\App\Response\Http as ResponseHttp;
 use Magento\Framework\App\Response\RedirectInterface;
 use Magento\Framework\App\ResponseInterface;
 use Magento\Framework\UrlInterface;
-use Magento\Store\Api\Data\StoreInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -47,6 +45,7 @@ class LoginCheckUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function testClassExists()
     {
         $this->assertTrue(class_exists(LoginCheck::class));
@@ -56,6 +55,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testClassExists
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testClassExists')]
     public function testConstructor()
     {
         $loginCheck = new LoginCheck(
@@ -91,7 +92,7 @@ class LoginCheckUnitTest extends TestCase
      */
     private function getCustomerSession()
     {
-        return $this->getMockBuilder(CustomerSession::class)
+        return $this->getMockBuilder(CustomerSessionDouble::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -101,9 +102,9 @@ class LoginCheckUnitTest extends TestCase
      */
     private function getSession()
     {
-        return $this->getMockBuilder(Session::class)
+        return $this->getMockBuilder(\BitExpert\ForceCustomerLogin\Test\Unit\Model\SessionDouble::class)
             ->disableOriginalConstructor()
-            ->setMethods([
+            ->onlyMethods([
                 'setAfterLoginReferer',
                 'getData'
             ])
@@ -173,21 +174,7 @@ class LoginCheckUnitTest extends TestCase
      */
     private function getRequest()
     {
-        return $this->getMockBuilder(RequestInterface::class)
-            ->disableOriginalConstructor()
-            ->setMethods([
-                'getModuleName',
-                'setModuleName',
-                'getActionName',
-                'setActionName',
-                'getParam',
-                'setParams',
-                'getParams',
-                'getCookie',
-                'isSecure',
-                'isPost'
-            ])
-            ->getMock();
+        return $this->createMock(RequestDoubleInterface::class);
     }
 
     /**
@@ -238,6 +225,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function skipMatchingWhenModuleIsDisabled()
     {
         $moduleCheck = $this->getModuleCheck();
@@ -269,6 +258,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function skipMatchingWhenCustomerSessionIsActive()
     {
         $moduleCheck = $this->getModuleCheck();
@@ -305,6 +296,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function skipMatchingWhenCustomerLoginViaMagentoAdminHappens()
     {
         $moduleCheck = $this->getModuleCheck();
@@ -341,6 +334,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function urlMatchesTargetUrlExactlyAndNoRedirectIsForced()
     {
         $urlString = 'http://example.tld/customer/account/login';
@@ -416,6 +411,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function ruleMatchingPositiveWithoutRedirect()
     {
         $urlString = 'http://example.tld/foo/bar';
@@ -518,6 +515,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function ruleMatchingFailsAndResultsInRedirect()
     {
         $urlString = 'http://example.tld/foo/bar';
@@ -526,32 +525,21 @@ class LoginCheckUnitTest extends TestCase
 
         // --- Scope Config
         $scopeConfig = $this->getScopeConfig();
-        $scopeConfig->expects($this->any())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                [LoginCheckInterface::MODULE_CONFIG_TARGET, ScopeInterface::SCOPE_STORE],
-                [LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT, ScopeInterface::SCOPE_STORE])
-            ->willReturnOnConsecutiveCalls($targetUrl, false);
+            ->willReturnCallback(function ($path, $scope) use ($targetUrl) {
+                static $call = 0;
+                $expectedPath = $call++ === 0
+                    ? LoginCheckInterface::MODULE_CONFIG_TARGET
+                    : LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT;
+                $this->assertSame($expectedPath, $path);
+                $this->assertSame(ScopeInterface::SCOPE_STORE, $scope);
+                return $call === 1 ? $targetUrl : false;
+            });
 
         // --- StoreManager
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->setMethods([
-                'getBaseUrl',
-                'getId',
-                'setId',
-                'getCode',
-                'setCode',
-                'getName',
-                'setName',
-                'getWebsiteId',
-                'setWebsiteId',
-                'getStoreGroupId',
-                'setStoreGroupId',
-                'getExtensionAttributes',
-                'setExtensionAttributes',
-                'setIsActive',
-                'getIsActive'
-            ])
+        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $store->expects($this->once())
             ->method('getBaseUrl')
@@ -655,6 +643,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function ensureSetBeforeAuthUrlBeforeRedirect()
     {
         $urlString = 'http://example.tld/foo/bar';
@@ -663,32 +653,21 @@ class LoginCheckUnitTest extends TestCase
 
         // --- Scope Config
         $scopeConfig = $this->getScopeConfig();
-        $scopeConfig->expects($this->any())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                [LoginCheckInterface::MODULE_CONFIG_TARGET, ScopeInterface::SCOPE_STORE],
-                [LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT, ScopeInterface::SCOPE_STORE])
-            ->willReturnOnConsecutiveCalls($targetUrl, true);
+            ->willReturnCallback(function ($path, $scope) use ($targetUrl) {
+                static $call = 0;
+                $expectedPath = $call++ === 0
+                    ? LoginCheckInterface::MODULE_CONFIG_TARGET
+                    : LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT;
+                $this->assertSame($expectedPath, $path);
+                $this->assertSame(ScopeInterface::SCOPE_STORE, $scope);
+                return $call === 1 ? $targetUrl : true;
+            });
 
         // --- StoreManager
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->setMethods([
-                'getBaseUrl',
-                'getId',
-                'setId',
-                'getCode',
-                'setCode',
-                'getName',
-                'setName',
-                'getWebsiteId',
-                'setWebsiteId',
-                'getStoreGroupId',
-                'setStoreGroupId',
-                'getExtensionAttributes',
-                'setExtensionAttributes',
-                'setIsActive',
-                'getIsActive'
-            ])
+        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $store->expects($this->once())
             ->method('getBaseUrl')
@@ -798,6 +777,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function ruleMatchingFailsAndResultsInSecureRedirect()
     {
         $urlString = 'http://example.tld/foo/bar';
@@ -806,32 +787,21 @@ class LoginCheckUnitTest extends TestCase
 
         // --- Scope Config
         $scopeConfig = $this->getScopeConfig();
-        $scopeConfig->expects($this->any())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                [LoginCheckInterface::MODULE_CONFIG_TARGET, ScopeInterface::SCOPE_STORE],
-                [LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT, ScopeInterface::SCOPE_STORE])
-            ->willReturnOnConsecutiveCalls($targetUrl, true);
+            ->willReturnCallback(function ($path, $scope) use ($targetUrl) {
+                static $call = 0;
+                $expectedPath = $call++ === 0
+                    ? LoginCheckInterface::MODULE_CONFIG_TARGET
+                    : LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT;
+                $this->assertSame($expectedPath, $path);
+                $this->assertSame(ScopeInterface::SCOPE_STORE, $scope);
+                return $call === 1 ? $targetUrl : true;
+            });
 
         // --- StoreManager
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->setMethods([
-                'getBaseUrl',
-                'getId',
-                'setId',
-                'getCode',
-                'setCode',
-                'getName',
-                'setName',
-                'getWebsiteId',
-                'setWebsiteId',
-                'getStoreGroupId',
-                'setStoreGroupId',
-                'getExtensionAttributes',
-                'setExtensionAttributes',
-                'setIsActive',
-                'getIsActive'
-            ])
+        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $store->expects($this->once())
             ->method('getBaseUrl')
@@ -935,6 +905,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function requestIsAjaxAndRuleMatchingFails()
     {
         $urlString = 'http://example.tld/company-module/api/endpoint';
@@ -943,32 +915,21 @@ class LoginCheckUnitTest extends TestCase
 
         // --- Scope Config
         $scopeConfig = $this->getScopeConfig();
-        $scopeConfig->expects($this->any())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                [LoginCheckInterface::MODULE_CONFIG_TARGET, ScopeInterface::SCOPE_STORE],
-                [LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT, ScopeInterface::SCOPE_STORE])
-            ->willReturnOnConsecutiveCalls($targetUrl, false);
+            ->willReturnCallback(function ($path, $scope) use ($targetUrl) {
+                static $call = 0;
+                $expectedPath = $call++ === 0
+                    ? LoginCheckInterface::MODULE_CONFIG_TARGET
+                    : LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT;
+                $this->assertSame($expectedPath, $path);
+                $this->assertSame(ScopeInterface::SCOPE_STORE, $scope);
+                return $call === 1 ? $targetUrl : false;
+            });
 
         // --- StoreManager
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->setMethods([
-                'getBaseUrl',
-                'getId',
-                'setId',
-                'getCode',
-                'setCode',
-                'getName',
-                'setName',
-                'getWebsiteId',
-                'setWebsiteId',
-                'getStoreGroupId',
-                'setStoreGroupId',
-                'getExtensionAttributes',
-                'setExtensionAttributes',
-                'setIsActive',
-                'getIsActive'
-            ])
+        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $store->expects($this->once())
             ->method('getBaseUrl')
@@ -1076,6 +1037,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function ruleMatchingFailsAjaxCheckUsesHttpObject()
     {
         $urlString = 'http://example.tld/foo/bar';
@@ -1084,32 +1047,21 @@ class LoginCheckUnitTest extends TestCase
 
         // --- Scope Config
         $scopeConfig = $this->getScopeConfig();
-        $scopeConfig->expects($this->any())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                [LoginCheckInterface::MODULE_CONFIG_TARGET, ScopeInterface::SCOPE_STORE],
-                [LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT, ScopeInterface::SCOPE_STORE])
-            ->willReturnOnConsecutiveCalls($targetUrl, false);
+            ->willReturnCallback(function ($path, $scope) use ($targetUrl) {
+                static $call = 0;
+                $expectedPath = $call++ === 0
+                    ? LoginCheckInterface::MODULE_CONFIG_TARGET
+                    : LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT;
+                $this->assertSame($expectedPath, $path);
+                $this->assertSame(ScopeInterface::SCOPE_STORE, $scope);
+                return $call === 1 ? $targetUrl : false;
+            });
 
         // --- StoreManager
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->setMethods([
-                'getBaseUrl',
-                'getId',
-                'setId',
-                'getCode',
-                'setCode',
-                'getName',
-                'setName',
-                'getWebsiteId',
-                'setWebsiteId',
-                'getStoreGroupId',
-                'setStoreGroupId',
-                'getExtensionAttributes',
-                'setExtensionAttributes',
-                'setIsActive',
-                'getIsActive'
-            ])
+        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $store->expects($this->once())
             ->method('getBaseUrl')
@@ -1215,6 +1167,8 @@ class LoginCheckUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function redirectMatchesReferrerUrlWithQueryParameters()
     {
         $baseUrl = 'http://example.tld';
@@ -1225,32 +1179,21 @@ class LoginCheckUnitTest extends TestCase
 
         // --- Scope Config
         $scopeConfig = $this->getScopeConfig();
-        $scopeConfig->expects($this->any())
+        $scopeConfig->expects($this->exactly(2))
             ->method('getValue')
-            ->withConsecutive(
-                [LoginCheckInterface::MODULE_CONFIG_TARGET, ScopeInterface::SCOPE_STORE],
-                [LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT, ScopeInterface::SCOPE_STORE])
-            ->willReturnOnConsecutiveCalls($targetUrl, false);
+            ->willReturnCallback(function ($path, $scope) use ($targetUrl) {
+                static $call = 0;
+                $expectedPath = $call++ === 0
+                    ? LoginCheckInterface::MODULE_CONFIG_TARGET
+                    : LoginCheckInterface::MODULE_CONFIG_FORCE_SECURE_REDIRECT;
+                $this->assertSame($expectedPath, $path);
+                $this->assertSame(ScopeInterface::SCOPE_STORE, $scope);
+                return $call === 1 ? $targetUrl : false;
+            });
 
         // --- StoreManager
-        $store = $this->getMockBuilder(StoreInterface::class)
-            ->setMethods([
-                'getBaseUrl',
-                'getId',
-                'setId',
-                'getCode',
-                'setCode',
-                'getName',
-                'setName',
-                'getWebsiteId',
-                'setWebsiteId',
-                'getStoreGroupId',
-                'setStoreGroupId',
-                'getExtensionAttributes',
-                'setExtensionAttributes',
-                'setIsActive',
-                'getIsActive'
-            ])
+        $store = $this->getMockBuilder(\Magento\Store\Model\Store::class)
+            ->disableOriginalConstructor()
             ->getMock();
         $store->expects($this->once())
             ->method('getBaseUrl')

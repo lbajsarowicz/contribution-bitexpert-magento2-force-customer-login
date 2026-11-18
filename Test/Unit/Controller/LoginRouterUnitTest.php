@@ -29,6 +29,7 @@ class LoginRouterUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function testClassExists()
     {
         $this->assertTrue(class_exists(LoginRouter::class));
@@ -38,6 +39,8 @@ class LoginRouterUnitTest extends TestCase
      * @test
      * @depends testClassExists
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testClassExists')]
     public function runRedirectRoutingOnlyIfLoginCheckHasExecutedSuccessfully()
     {
         $actionFactory = $this->getActionFactory();
@@ -55,20 +58,7 @@ class LoginRouterUnitTest extends TestCase
             $loginCheck
         );
 
-        $request = $this->getMockBuilder(RequestInterface::class)
-            ->setMethods([
-                'getModuleName',
-                'setModuleName',
-                'getActionName',
-                'setActionName',
-                'getParam',
-                'getParams',
-                'setParams',
-                'getCookie',
-                'isSecure',
-                'setDispatched'
-            ])
-            ->getMock();
+        $request = $this->createMock(RequestDoubleInterface::class);
         $request->expects($this->once())
             ->method('setDispatched')
             ->with(true);
@@ -80,6 +70,8 @@ class LoginRouterUnitTest extends TestCase
      * @test
      * @depends testClassExists
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testClassExists')]
     public function skipRedirectRoutingIfLoginCheckHasNotBeenExecuted()
     {
         $actionFactory = $this->getActionFactory();
@@ -97,20 +89,7 @@ class LoginRouterUnitTest extends TestCase
             $loginCheck
         );
 
-        $request = $this->getMockBuilder('\Magento\Framework\App\RequestInterface')
-            ->setMethods([
-                'getModuleName',
-                'setModuleName',
-                'getActionName',
-                'setActionName',
-                'getParam',
-                'getParams',
-                'setParams',
-                'getCookie',
-                'isSecure',
-                'setDispatched'
-            ])
-            ->getMock();
+        $request = $this->createMock(RequestDoubleInterface::class);
         $request->expects($this->never())
             ->method('setDispatched')
             ->with(true);

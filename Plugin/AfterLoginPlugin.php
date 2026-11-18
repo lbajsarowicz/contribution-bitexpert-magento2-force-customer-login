@@ -93,7 +93,6 @@ class AfterLoginPlugin
             $targetUrl = $this->defaultTargetUrl;
         }
 
-        /** @var Redirect $resultRedirect */
         if ($resultRedirect instanceof Redirect) {
             $resultRedirect->setUrl($targetUrl);
         }

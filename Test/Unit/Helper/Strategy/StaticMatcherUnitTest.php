@@ -26,6 +26,7 @@ class StaticMatcherUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function matchStaticRulesCorrectly()
     {
         $matcher = new StaticMatcher('foobar');
@@ -36,7 +37,7 @@ class StaticMatcherUnitTest extends TestCase
         $rule = $this->getMockBuilder(WhitelistEntry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $rule->expects($this->any())
+        $rule->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn('/foobar');
 

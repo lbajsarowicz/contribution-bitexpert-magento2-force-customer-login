@@ -27,6 +27,7 @@ class WhitelistEntrySearchResultInterfaceFactoryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function createEntitySuccessfully()
     {
         $expectedEntity = $this->createMock(WhitelistEntrySearchResultInterface::class);

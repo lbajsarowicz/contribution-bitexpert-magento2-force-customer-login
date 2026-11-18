@@ -12,7 +12,6 @@
 namespace BitExpert\ForceCustomerLogin\Test\Unit\Repository;
 
 use BitExpert\ForceCustomerLogin\Api\Data\Collection\WhitelistEntryCollectionFactoryInterface;
-use BitExpert\ForceCustomerLogin\Api\Data\Collection\WhitelistEntrySearchResultInterface;
 use BitExpert\ForceCustomerLogin\Api\Data\WhitelistEntryFactoryInterface;
 use BitExpert\ForceCustomerLogin\Api\Repository\WhitelistRepositoryInterface;
 use BitExpert\ForceCustomerLogin\Model\ResourceModel\WhitelistEntry\Collection;
@@ -36,6 +35,7 @@ class WhitelistRepositoryUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function testClassExists()
     {
         $this->assertTrue(class_exists(WhitelistRepository::class));
@@ -45,6 +45,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testClassExists
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testClassExists')]
     public function testConstructor()
     {
         $whitelistRepository = new WhitelistRepository(
@@ -101,6 +103,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function testEntryCreationWithoutExistingEntity()
     {
         $entityId = null;
@@ -110,34 +114,34 @@ class WhitelistRepositoryUnitTest extends TestCase
         $strategy = 'default';
 
         $expectedWhitelistEntry = $this->createMock(WhitelistEntry::class);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($entityId);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('load')
             ->with($label, 'label')
             ->willReturnSelf();
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($entityId);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn($label);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn($urlRule);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getStrategy')
             ->willReturn($strategy);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getEditable')
             ->willReturn(true);
 
         $whitelistEntryFactory = $this->getWhitelistEntryFactory();
-        $whitelistEntryFactory->expects($this->any())
+        $whitelistEntryFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($expectedWhitelistEntry);
-        $whitelistEntryFactory->expects($this->any())
+        $whitelistEntryFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($expectedWhitelistEntry);
 
@@ -159,6 +163,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function testEntryCreationWithExistingEntity()
     {
         $entityId = 42;
@@ -168,33 +174,33 @@ class WhitelistRepositoryUnitTest extends TestCase
         $strategy = 'default';
 
         $expectedWhitelistEntry = $this->createMock(WhitelistEntry::class);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('load')
             ->with($entityId)
             ->willReturnSelf();
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($entityId);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getEditable')
             ->willReturn(true);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('setEditable')
             ->with(true);
         // validation
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getLabel')
             ->willReturn($label);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getUrlRule')
             ->willReturn($urlRule);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getStrategy')
             ->willReturn($strategy);
 
 
         $whitelistEntryFactory = $this->getWhitelistEntryFactory();
-        $whitelistEntryFactory->expects($this->any())
+        $whitelistEntryFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($expectedWhitelistEntry);
 
@@ -216,6 +222,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function testEntryCreationWithExistingEntityFailsDueToNonEditable()
     {
         $this->expectException(\RuntimeException::class);
@@ -228,19 +236,19 @@ class WhitelistRepositoryUnitTest extends TestCase
         $strategy = 'default';
 
         $expectedWhitelistEntry = $this->createMock(WhitelistEntry::class);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('load')
             ->with($entityId)
             ->willReturnSelf();
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getId')
             ->willReturn($entityId);
-        $expectedWhitelistEntry->expects($this->any())
+        $expectedWhitelistEntry->expects($this->atLeastOnce())
             ->method('getEditable')
             ->willReturn(false);
 
         $whitelistEntryFactory = $this->getWhitelistEntryFactory();
-        $whitelistEntryFactory->expects($this->any())
+        $whitelistEntryFactory->expects($this->atLeastOnce())
             ->method('create')
             ->willReturn($expectedWhitelistEntry);
 
@@ -258,6 +266,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function deleteEntityFailsDueToNonEditable()
     {
         $entityId = 42;
@@ -292,6 +302,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function deleteEntitySucceeds()
     {
         $entityId = 42;
@@ -328,6 +340,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function getCollectionSuccessfully()
     {
         $storeId = 222;
@@ -378,6 +392,8 @@ class WhitelistRepositoryUnitTest extends TestCase
      * @test
      * @depends testConstructor
      */
+    #[\PHPUnit\Framework\Attributes\Test]
+    #[\PHPUnit\Framework\Attributes\Depends('testConstructor')]
     public function getListSuccessfully()
     {
         $filter = $this->getMockBuilder(Filter::class)
@@ -413,8 +429,8 @@ class WhitelistRepositoryUnitTest extends TestCase
             ->method('getPageSize')
             ->willReturn(42);
 
-        $expectedSearchResult = $this->getMockBuilder(WhitelistEntrySearchResultInterface::class)
-            ->setMethods([
+        $expectedSearchResult = $this->getMockBuilder(WhitelistSearchResultDoubleInterface::class)
+            ->onlyMethods([
                 'getItems',
                 'setItems',
                 'getSearchCriteria',

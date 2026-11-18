@@ -27,6 +27,7 @@ class ModuleCheckUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function moduleEnabledSuccessfully()
     {
         $scopeConfig = $this->getScopeConfig();
@@ -46,6 +47,7 @@ class ModuleCheckUnitTest extends TestCase
     /**
      * @test
      */
+    #[\PHPUnit\Framework\Attributes\Test]
     public function moduleDisabledSuccessfully()
     {
         $scopeConfig = $this->getScopeConfig();
