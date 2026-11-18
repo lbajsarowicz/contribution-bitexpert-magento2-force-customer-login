@@ -174,21 +174,7 @@ class LoginCheckUnitTest extends TestCase
      */
     private function getRequest()
     {
-        return $this->getMockBuilder(RequestDoubleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getModuleName',
-                'setModuleName',
-                'getActionName',
-                'setActionName',
-                'getParam',
-                'setParams',
-                'getParams',
-                'getCookie',
-                'isSecure',
-                'isPost'
-            ])
-            ->getMock();
+        return $this->createMock(RequestDoubleInterface::class);
     }
 
     /**

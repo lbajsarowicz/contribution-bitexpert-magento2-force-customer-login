@@ -58,21 +58,7 @@ class LoginRouterUnitTest extends TestCase
             $loginCheck
         );
 
-        $request = $this->getMockBuilder(RequestDoubleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getModuleName',
-                'setModuleName',
-                'getActionName',
-                'setActionName',
-                'getParam',
-                'getParams',
-                'setParams',
-                'getCookie',
-                'isSecure',
-                'setDispatched'
-            ])
-            ->getMock();
+        $request = $this->createMock(RequestDoubleInterface::class);
         $request->expects($this->once())
             ->method('setDispatched')
             ->with(true);
@@ -103,21 +89,7 @@ class LoginRouterUnitTest extends TestCase
             $loginCheck
         );
 
-        $request = $this->getMockBuilder(RequestDoubleInterface::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([
-                'getModuleName',
-                'setModuleName',
-                'getActionName',
-                'setActionName',
-                'getParam',
-                'getParams',
-                'setParams',
-                'getCookie',
-                'isSecure',
-                'setDispatched'
-            ])
-            ->getMock();
+        $request = $this->createMock(RequestDoubleInterface::class);
         $request->expects($this->never())
             ->method('setDispatched')
             ->with(true);
